@@ -1,0 +1,26 @@
+.grid {
+  margin-top: 65px;
+  display: grid;
+  grid-template-columns: 31% 31% 31%;
+  justify-content: space-around;
+}
+
+.card {
+  margin: 10px;
+}
+
+.link {
+  text-decoration: none;
+}
+
+@media screen and (max-width:768px) {
+  .grid {
+    grid-template-columns: 48% 48%;
+  }
+}
+
+@media screen and (max-width:480px) {
+  .grid {
+    grid-template-columns: 99%;
+  }
+}
