@@ -176,12 +176,12 @@ class Dashboard extends Component {
                 onClick={this.handleAlphaSort}
                 color="inherit"
                 className="classes.button"
-              >Name</Button>
+              >Sort by Name</Button>
               <Button
                 onClick={this.handleScoreSort}
                 color="inherit"
                 className="classes.button"
-              >Marks</Button>
+              >Sort by Marks</Button>
             </Toolbar>
           </AppBar>
         </div>

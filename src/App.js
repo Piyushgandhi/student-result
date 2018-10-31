@@ -2,8 +2,17 @@ import React, { Component } from 'react';
 import Dashboard from './Components/Dashboard';
 import { Route, Switch } from 'react-router-dom';
 import Details from './Components/Details'
-import loader from './Images/loader.gif'
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { withStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
 import './App.css';
+
+const styles = theme => ({
+  progress: {
+    marginTop: theme.spacing.unit * 40,
+    marginLeft: theme.spacing.unit * 70,
+  },
+});
 
 class App extends Component {
   constructor(props) {
@@ -35,12 +44,15 @@ class App extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     const { error, isLoaded, studentsData } = this.state;
     if (error) {
       return <div className="error">Error</div>
     }
     else if (!isLoaded) {
-      return <div className="loading"><img src={loader} alt='loading...' /></div>
+      return <div className="loading">
+        <CircularProgress className={classes.progress} size={100} />
+      </div>
     }
     else {
       return (
@@ -55,4 +67,8 @@ class App extends Component {
   }match
 }
 
-export default App;
+App.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(App);
