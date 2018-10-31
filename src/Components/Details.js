@@ -11,6 +11,28 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
+import ReactFC from 'react-fusioncharts';
+import FusionCharts from 'fusioncharts';
+import Column2D from 'fusioncharts/fusioncharts.charts';
+import FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion';
+ReactFC.fcRoot(FusionCharts, Column2D, FusionTheme);
+const chartConfigs = {
+  type: 'column2d',// The chart type
+  width: '100%', // Width of the chart
+  height: '400', // Height of the chart
+  dataFormat: 'json', // Data type
+  dataSource: {
+    // Chart Configuration 
+    "chart": {
+      "xAxisName": "Subject",
+      "yAxisName": "Marks",
+      "theme": "fusion",
+    },
+    // Chart Data
+    "data": []
+  }
+};
+
 
 const styles = {
   card: {
@@ -25,61 +47,102 @@ const styles = {
     textAlign: 'center',
   },
   button: {
-    marginTop: 10,
+    margin: 10,
   },
   link: {
     textDecoration: 'none',
-  }
+  },
+  footer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  home: {
+    float: 'right',
+    margin: 10,
+  },
 };
 
 
 class Details extends Component {
   constructor(props) {
     super(props);
+    this.handleGraphVisibility = this.handleGraphVisibility.bind(this);
+    this.state = {
+      graph: false,
+    }
+  }
+
+  handleGraphVisibility() {
+    const { graph } = this.state;
+    this.setState({ graph: !graph })
+    chartConfigs.dataSource.data = []
   }
 
   render() {
+    const { graph } = this.state;
     const { classes, studentsData, match } = this.props;
     var id = match.params.id;
-    if(studentsData[id])
-    return (
-      <div>
-        <Card className={classes.card} >
+    if (studentsData[id])
+      return (
+        <div>
+          <Card className={classes.card} >
+            <CardContent>
+              <div className={classes.text} >
+                <Typography variant="h4" component="h2">{studentsData[id].name}</Typography>
+                <Typography component="h2">Class: {studentsData[id].class}</Typography>
+                <Typography component="h2">Roll No: {studentsData[id].rollNo}</Typography>
+              </div>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Subject</TableCell>
+                    <TableCell>Marks</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {
+                    Object.entries(studentsData[id].marks).map((mark) => {
+                      chartConfigs.dataSource.data.push({ "label": mark[0], "value": mark[1] })
+                      return (
+                        <TableRow key={mark[0]}>
+                          <TableCell>{mark[0]}</TableCell>
+                          <TableCell>{mark[1]}</TableCell>
+                        </TableRow>
+                      )
+                    })
+                  }
+                </TableBody>
+              </Table>
+              <div className={classes.footer}>
+                <Link className={classes.link} to="/">
+                  <Button variant="contained" className={classes.button}>Back</Button>
+                </Link>
+                <Button
+                  onClick={this.handleGraphVisibility}
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+                >
+                  Graph
+                </Button>
+              </div>
+              {graph && <ReactFC {...chartConfigs} />}
+            </CardContent>
+          </Card>
+        </div>
+      )
+    else
+      return (
+        <Card className={classes.card}>
           <CardContent>
-            <div className={classes.text} >
-              <Typography variant="h4" component="h2">{studentsData[id].name}</Typography>
-              <Typography component="h2">Class: {studentsData[id].class}</Typography>
-              <Typography component="h2">Roll No: {studentsData[id].rollNo}</Typography>
-            </div>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Marks</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {
-                  Object.entries(studentsData[id].marks).map((mark) =>
-                    <TableRow key={mark[0]}>
-                      <TableCell>{mark[0]}</TableCell>
-                      <TableCell>{mark[1]}</TableCell>
-                    </TableRow>
-                  )
-                }
-              </TableBody>
-            </Table>
+            <h2>404: Not Found</h2>
+            <p>The requested URL was not found in the server</p>
             <Link className={classes.link} to="/">
-              <Button className={classes.button}>Back</Button>
+              <Button className={classes.home} variant="contained" color="primary">Home</Button>
             </Link>
           </CardContent>
         </Card>
-      </div>
-    )
-    else 
-    return (
-      <label>Not Found</label>
-    )
+      )
   }
 }
 

@@ -1,7 +1,9 @@
 .grid {
-  margin-top: 65px;
+  margin: auto;
+  width: 90%;
+  margin-top: 70px;
   display: grid;
-  grid-template-columns: 31% 31% 31%;
+  grid-template-columns: 32% 32% 32%;
   justify-content: space-around;
 }
 
