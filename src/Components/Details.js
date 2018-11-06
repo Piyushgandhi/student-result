@@ -113,6 +113,11 @@ class Details extends Component {
                   }
                 </TableBody>
               </Table>
+              {
+                graph &&
+                <div>
+                  <ReactFC {...chartConfigs} />
+                </div>}
               <div className={classes.footer}>
                 <Link className={classes.link} to="/">
                   <Button variant="contained" className={classes.button}>Back</Button>
@@ -126,7 +131,6 @@ class Details extends Component {
                   Graph
                 </Button>
               </div>
-              {graph && <ReactFC {...chartConfigs} />}
             </CardContent>
           </Card>
         </div>

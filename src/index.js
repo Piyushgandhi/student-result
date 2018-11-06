@@ -4,10 +4,14 @@ import './index.css';
 import App from './App';
 import { BrowserRouter as Router } from 'react-router-dom'
 import * as serviceWorker from './serviceWorker';
+import { CookiesProvider } from 'react-cookie';
 
 ReactDOM.render(
-<Router>
-  <App />
-</Router>, document.getElementById('root'));
+  <CookiesProvider>
+    <Router>
+      <App />
+    </Router>
+  </CookiesProvider>,
+  document.getElementById('root'));
 
 serviceWorker.unregister();

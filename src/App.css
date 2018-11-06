@@ -1,6 +1,6 @@
 .grid {
   margin: auto;
-  width: 90%;
+  width: 95%;
   margin-top: 70px;
   display: grid;
   grid-template-columns: 32% 32% 32%;
@@ -23,6 +23,6 @@
 
 @media screen and (max-width:480px) {
   .grid {
-    grid-template-columns: 99%;
+    grid-template-columns: 100%;
   }
 }

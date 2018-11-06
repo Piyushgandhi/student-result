@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import Dashboard from './Components/Dashboard';
+import Login from './Components/Login';
 import { Route, Switch } from 'react-router-dom';
 import Details from './Components/Details'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import { withCookies } from 'react-cookie';
 import './App.css';
 
 const styles = theme => ({
@@ -44,10 +46,10 @@ class App extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes,cookies } = this.props;
     const { error, isLoaded, studentsData } = this.state;
     if (error) {
-      return <div className="error">Error</div>
+      return <div className="error">Error: {error.message}</div>
     }
     else if (!isLoaded) {
       return <div className="loading">
@@ -58,17 +60,18 @@ class App extends Component {
       return (
         <div className="dashboard">
           <Switch>
-              <Route exact path="/" component={() => <Dashboard studentsData={studentsData} />} />
+              <Route exact path="/login" component={() => <Login cookies={cookies} />} />
+              <Route exact path="/" component={() => <Dashboard studentsData={studentsData} cookies={cookies} />} />
               <Route exact path="/:id" render={(routeProps) => <Details {...routeProps} studentsData={studentsData} />} />
           </Switch>
         </div>
       )
     }
-  }match
+  }
 }
 
 App.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(App);
+export default withStyles(styles)(withCookies(App));
