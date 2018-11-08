@@ -12,6 +12,8 @@ import Button from '@material-ui/core/Button';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import { Link, Redirect } from 'react-router-dom';
 import Snackbar from '@material-ui/core/Snackbar';
+import { connect } from 'react-redux';
+import { setUser } from '../Actions/action';
 import '../App.css';
 
 const styles = theme => ({
@@ -135,7 +137,7 @@ class Dashboard extends Component {
 
   render() {
     const { value, snackbar, vertical, horizontal, message, sort } = this.state;
-    const { studentsData, classes, cookies } = this.props;
+    const { studentsData, classes, cookies, setCurrentStudent } = this.props;
     var regex = new RegExp('^' + value, "i");
     var data = Object.entries(studentsData);
     if (sort === 'aToz') {
@@ -168,7 +170,7 @@ class Dashboard extends Component {
         - Object.values(a[1].marks).reduce((sum, mark) => sum + mark)
       )
     }
-    if (cookies.cookies.email) {
+    if (cookies.get('email')) {
       return (
         <div className="dashboard">
           <div className="appbar">
@@ -233,7 +235,7 @@ class Dashboard extends Component {
               data = data.map((student) => {
                 return (regex.test(student[1].name) &&
                   <Card className="card" key={student[1].rollNo}>
-                    <CardActionArea component={Link} to={`/${student[1].rollNo}`} className={classes.cardarea}>
+                    <CardActionArea onClick={() => setCurrentStudent(student[1].rollNo)} component={Link} to={`/${student[1].rollNo}`} className={classes.cardarea}>
                       <Typography gutterBottom variant="h5" component="h2">
                         {student[1].name}
                       </Typography>
@@ -268,4 +270,15 @@ Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Dashboard);
+const mapStateToProps = (state, ownProps) => {
+  return ({
+  studentsData: state.fetchData,
+  id: state.currentUser,
+  cookies: ownProps.cookies
+})}
+
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentStudent: (id) => dispatch(setUser(id))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps) (withStyles(styles)(Dashboard));

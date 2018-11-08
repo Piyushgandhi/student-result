@@ -15,6 +15,8 @@ import ReactFC from 'react-fusioncharts';
 import FusionCharts from 'fusioncharts';
 import Column2D from 'fusioncharts/fusioncharts.charts';
 import FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion';
+import { connect } from 'react-redux';
+
 ReactFC.fcRoot(FusionCharts, Column2D, FusionTheme);
 const chartConfigs = {
   type: 'column2d',// The chart type
@@ -154,4 +156,9 @@ Details.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Details)
+const mapStateToProps = (state) => {
+  return ({
+  studentsData: state.fetchData,
+})}
+
+export default connect(mapStateToProps, null)(withStyles(styles)(Details));

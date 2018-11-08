@@ -7,6 +7,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { withCookies } from 'react-cookie';
+import { connect } from 'react-redux'
+import { addData } from './Actions/action';
+import { withRouter } from 'react-router-dom';
+import NotFound from './Components/NotFound';
 import './App.css';
 
 const styles = theme => ({
@@ -22,7 +26,6 @@ class App extends Component {
     this.state = {
       error: null,
       isLoaded: false,
-      studentsData: []
     };
   }
 
@@ -31,23 +34,20 @@ class App extends Component {
       .then(res => res.json())
       .then(
         (result) => {
+          if (result.status) {
+            throw result
+          }
+          this.props.setData(result);
           this.setState({
             isLoaded: true,
-            studentsData: result
-          });
-        },
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
           });
         }
-      )
+      ).catch(e => this.setState({ error: e }))
   }
 
   render() {
-    const { classes,cookies } = this.props;
-    const { error, isLoaded, studentsData } = this.state;
+    const { classes, cookies } = this.props;
+    const { error, isLoaded } = this.state;
     if (error) {
       return <div className="error">Error: {error.message}</div>
     }
@@ -60,9 +60,10 @@ class App extends Component {
       return (
         <div className="dashboard">
           <Switch>
-              <Route exact path="/login" component={() => <Login cookies={cookies} />} />
-              <Route exact path="/" component={() => <Dashboard studentsData={studentsData} cookies={cookies} />} />
-              <Route exact path="/:id" render={(routeProps) => <Details {...routeProps} studentsData={studentsData} />} />
+            <Route exact path="/login" component={() => <Login cookies={cookies} />} />
+            <Route exact path="/" component={() => <Dashboard cookies={cookies} />} />
+            <Route exact path="/:id" component={Details} />
+            <Route component={NotFound} />
           </Switch>
         </div>
       )
@@ -74,4 +75,8 @@ App.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(withCookies(App));
+const mapDispatchToProps = (dispatch) => ({
+  setData: (data) => dispatch(addData(data)),
+})
+
+export default withRouter(connect(null, mapDispatchToProps)(withStyles(styles)(withCookies(App))));
