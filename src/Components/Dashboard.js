@@ -13,10 +13,14 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import { Link, Redirect } from 'react-router-dom';
 import Snackbar from '@material-ui/core/Snackbar';
 import { connect } from 'react-redux';
-import { setUser } from '../Actions/action';
+import { setUser, setSort,setSearchText } from '../Actions/action';
 import '../App.css';
+import { createMuiTheme } from '@material-ui/core/styles';
 
-const styles = theme => ({
+const styles = theme => createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
   card: {
     minWidth: 275,
   },
@@ -78,7 +82,6 @@ const styles = theme => ({
   },
   button: {
     margin: theme.spacing.unit,
-    color: 'white',
   },
   cardarea: {
     padding: 10,
@@ -87,7 +90,11 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     paddingRight: '6%',
-  }
+  },
+  formControl: {
+    margin: theme.spacing.unit,
+    minWidth: 120,
+  },
 });
 
 class Dashboard extends Component {
@@ -97,12 +104,10 @@ class Dashboard extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSort = this.handleSort.bind(this);
     this.state = {
-      value: '',
       snackbar: false,
       vertical: 'bottom',
       horizontal: 'center',
       message: '',
-      sort: '',
     }
   }
 
@@ -112,21 +117,25 @@ class Dashboard extends Component {
   }
 
   handleSearch(event) {
-    this.setState({ value: event.target.value });
+    this.props.setSearchText(event.target.value);
   }
 
   handleSort(event) {
-    if(event.currentTarget.value === 'aToz') {
-    this.setState({ sort: event.currentTarget.value, snackbar: true, message: 'Sorted in alphabetical order' });
+    this.props.setSort(event.currentTarget.value);
+    if (event.currentTarget.value === '') {
+      this.setState({ snackbar: true, message: 'Sorted according to Roll No' });
     }
-    else if(event.currentTarget.value === 'zToa') {
-    this.setState({ sort: event.currentTarget.value, snackbar: true, message: 'Sorted in reverse alphabetical order' });
+    if (event.currentTarget.value === 'aToz') {
+      this.setState({ snackbar: true, message: 'Sorted in alphabetical order' });
     }
-    else if(event.currentTarget.value === 'lowToHigh') {
-      this.setState({ sort: event.currentTarget.value, snackbar: true, message: 'Sorted by marks low to high' });
+    else if (event.currentTarget.value === 'zToa') {
+      this.setState({ snackbar: true, message: 'Sorted in reverse alphabetical order' });
     }
-    else if(event.currentTarget.value === 'highToLow') {
-      this.setState({ sort: event.currentTarget.value, snackbar: true, message: 'Sorted by marks high to low' });
+    else if (event.currentTarget.value === 'lowToHigh') {
+      this.setState({ snackbar: true, message: 'Sorted by marks low to high' });
+    }
+    else if (event.currentTarget.value === 'highToLow') {
+      this.setState({ snackbar: true, message: 'Sorted by marks high to low' });
     }
     setTimeout(() => this.setState({ snackbar: false }), 2000);
   }
@@ -136,11 +145,11 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { value, snackbar, vertical, horizontal, message, sort } = this.state;
-    const { studentsData, classes, cookies, setCurrentStudent } = this.props;
-    var regex = new RegExp('^' + value, "i");
+    const { snackbar, vertical, horizontal, message } = this.state;
+    const { studentsData, classes, cookies, setCurrentStudent, sortType, searchText } = this.props;
+    var regex = new RegExp('^' + searchText, "i");
     var data = Object.entries(studentsData);
-    if (sort === 'aToz') {
+    if (sortType === 'aToz') {
       data = data.sort((a, b) => {
         if (a[1].name.toUpperCase() < b[1].name.toUpperCase())
           return -1;
@@ -149,7 +158,7 @@ class Dashboard extends Component {
         return 0;
       });
     }
-    else if (sort === 'zToa') {
+    else if (sortType === 'zToa') {
       data = Object.entries(studentsData).sort((a, b) => {
         if (a[1].name.toUpperCase() > b[1].name.toUpperCase())
           return -1;
@@ -158,13 +167,13 @@ class Dashboard extends Component {
         return 0;
       });
     }
-    else if (sort === 'lowToHigh') {
+    else if (sortType === 'lowToHigh') {
       data = Object.entries(studentsData).sort((a, b) =>
         Object.values(a[1].marks).reduce((sum, mark) => sum + mark)
         - Object.values(b[1].marks).reduce((sum, mark) => sum + mark)
       )
     }
-    if (sort === 'highToLow') {
+    else if (sortType === 'highToLow') {
       data = Object.entries(studentsData).sort((a, b) =>
         Object.values(b[1].marks).reduce((sum, mark) => sum + mark)
         - Object.values(a[1].marks).reduce((sum, mark) => sum + mark)
@@ -185,7 +194,7 @@ class Dashboard extends Component {
                     <SearchIcon />
                   </div>
                   <InputBase
-                    value={value}
+                    value={searchText}
                     onChange={this.handleSearch}
                     placeholder="Search…"
                     classes={{
@@ -194,26 +203,37 @@ class Dashboard extends Component {
                     }}
                   />
                 </div>
-                <Typography color="inherit">Sort: </Typography>
+                <Typography color="inherit" >Sort:</Typography>
                 <Button
-                  value="aToz"
-                  onClick={this.handleSort}
+                  size="small"
+                  value=""
                   color="inherit"
+                  onClick={this.handleSort}
+                  className="classes.button"
+                >Roll No</Button>
+                <Button
+                  size="small"
+                  value="aToz"
+                  color="inherit"
+                  onClick={this.handleSort}
                   className="classes.button"
                 >Name A-Z</Button>
                 <Button
+                  size="small"
                   value="zToa"
                   onClick={this.handleSort}
                   color="inherit"
                   className="classes.button"
                 >Name Z-A</Button>
                 <Button
+                  size="small"
                   value="lowToHigh"
                   onClick={this.handleSort}
                   color="inherit"
                   className="classes.button"
                 >Marks Low-High</Button>
                 <Button
+                  size="small"
                   value="highToLow"
                   onClick={this.handleSort}
                   color="inherit"
@@ -272,13 +292,18 @@ Dashboard.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   return ({
-  studentsData: state.fetchData,
-  id: state.currentUser,
-  cookies: ownProps.cookies
-})}
+    studentsData: state.fetchData,
+    id: state.currentUser,
+    sortType: state.sortType,
+    cookies: ownProps.cookies,
+    searchText: state.searchText,
+  })
+}
 
 const mapDispatchToProps = (dispatch) => ({
-  setCurrentStudent: (id) => dispatch(setUser(id))
+  setCurrentStudent: (id) => dispatch(setUser(id)),
+  setSort: (sort) => dispatch(setSort(sort)),
+  setSearchText: (text) => dispatch(setSearchText(text))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps) (withStyles(styles)(Dashboard));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Dashboard));

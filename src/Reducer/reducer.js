@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { ADD_DATA, SET_USER } from '../Actions/action';
+import { ADD_DATA, SET_USER, SORT, SEARCH } from '../Actions/action';
 
 function fetchData(state = {}, action) {
   switch (action.type) {
@@ -19,9 +19,29 @@ function currentUser(state = 0, action) {
   }
 }
 
+function sortType(state = '', action) {
+  switch (action.type) {
+    case SORT:
+      return action.sort;
+    default:
+      return state;
+  }
+}
+
+function searchText(state = '', action) {
+  switch (action.type) {
+    case SEARCH:
+      return action.text;
+    default:
+      return state;
+  }
+}
+
 const myReducer = combineReducers({
   fetchData,
   currentUser,
+  sortType,
+  searchText
 })
 
 export default myReducer;

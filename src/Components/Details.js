@@ -16,7 +16,7 @@ import FusionCharts from 'fusioncharts';
 import Column2D from 'fusioncharts/fusioncharts.charts';
 import FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion';
 import { connect } from 'react-redux';
-
+import NotFound from './NotFound';
 ReactFC.fcRoot(FusionCharts, Column2D, FusionTheme);
 const chartConfigs = {
   type: 'column2d',// The chart type
@@ -42,9 +42,6 @@ const styles = {
     margin: 'auto',
     marginTop: 50,
   },
-  media: {
-    height: 140,
-  },
   text: {
     textAlign: 'center',
   },
@@ -57,10 +54,6 @@ const styles = {
   footer: {
     display: 'flex',
     justifyContent: 'space-between',
-  },
-  home: {
-    float: 'right',
-    margin: 10,
   },
 };
 
@@ -139,15 +132,7 @@ class Details extends Component {
       )
     else
       return (
-        <Card className={classes.card}>
-          <CardContent>
-            <h2>404: Not Found</h2>
-            <p>The requested URL was not found in the server</p>
-            <Link className={classes.link} to="/">
-              <Button className={classes.home} variant="contained" color="primary">Home</Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <NotFound />
       )
   }
 }
