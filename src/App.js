@@ -8,7 +8,7 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { withCookies } from 'react-cookie';
 import { connect } from 'react-redux'
-import { addData } from './Actions/action';
+import { addData, loadData } from './Actions/action';
 import { withRouter } from 'react-router-dom';
 import NotFound from './Components/NotFound';
 import './App.css';
@@ -30,6 +30,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    // this.props.dispatch(loadData())
     fetch("https://api.myjson.com/bins/1dlper")
       .then(res => res.json())
       .then(

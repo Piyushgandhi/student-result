@@ -35,7 +35,6 @@ const chartConfigs = {
   }
 };
 
-
 const styles = {
   card: {
     maxWidth: 600,

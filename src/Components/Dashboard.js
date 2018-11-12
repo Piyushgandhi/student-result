@@ -13,7 +13,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import { Link, Redirect } from 'react-router-dom';
 import Snackbar from '@material-ui/core/Snackbar';
 import { connect } from 'react-redux';
-import { setUser, setSort,setSearchText } from '../Actions/action';
+import { setUser, setSort, setSearchText } from '../Actions/action';
 import '../App.css';
 import { createMuiTheme } from '@material-ui/core/styles';
 
@@ -121,21 +121,26 @@ class Dashboard extends Component {
   }
 
   handleSort(event) {
-    this.props.setSort(event.currentTarget.value);
-    if (event.currentTarget.value === '') {
-      this.setState({ snackbar: true, message: 'Sorted according to Roll No' });
+    const { sortType, setSort } = this.props;
+    if (event.currentTarget.value === 'name') {
+      if (sortType === 'aToz') {
+        this.setState({ snackbar: true, message: 'Sorted in reverse alphabetical order' });
+        this.props.setSort('zToa');
+      }
+      else {
+        this.setState({ snackbar: true, message: 'Sorted in alphabetical order' });
+        this.props.setSort('aToz');
+      }
     }
-    if (event.currentTarget.value === 'aToz') {
-      this.setState({ snackbar: true, message: 'Sorted in alphabetical order' });
-    }
-    else if (event.currentTarget.value === 'zToa') {
-      this.setState({ snackbar: true, message: 'Sorted in reverse alphabetical order' });
-    }
-    else if (event.currentTarget.value === 'lowToHigh') {
-      this.setState({ snackbar: true, message: 'Sorted by marks low to high' });
-    }
-    else if (event.currentTarget.value === 'highToLow') {
-      this.setState({ snackbar: true, message: 'Sorted by marks high to low' });
+    if (event.currentTarget.value === 'marks') {
+      if (sortType === 'lowToHigh') {
+        this.setState({ snackbar: true, message: 'Sorted by marks high to low' });
+        setSort('highToLow');
+      }
+      else {
+        this.setState({ snackbar: true, message: 'Sorted by marks low to high' });
+        setSort('lowToHigh');
+      }
     }
     setTimeout(() => this.setState({ snackbar: false }), 2000);
   }
@@ -206,39 +211,18 @@ class Dashboard extends Component {
                 <Typography color="inherit" >Sort:</Typography>
                 <Button
                   size="small"
-                  value=""
+                  value="name"
                   color="inherit"
                   onClick={this.handleSort}
                   className="classes.button"
-                >Roll No</Button>
+                >Name</Button>
                 <Button
                   size="small"
-                  value="aToz"
-                  color="inherit"
-                  onClick={this.handleSort}
-                  className="classes.button"
-                >Name A-Z</Button>
-                <Button
-                  size="small"
-                  value="zToa"
+                  value="marks"
                   onClick={this.handleSort}
                   color="inherit"
                   className="classes.button"
-                >Name Z-A</Button>
-                <Button
-                  size="small"
-                  value="lowToHigh"
-                  onClick={this.handleSort}
-                  color="inherit"
-                  className="classes.button"
-                >Marks Low-High</Button>
-                <Button
-                  size="small"
-                  value="highToLow"
-                  onClick={this.handleSort}
-                  color="inherit"
-                  className="classes.button"
-                >Marks High-Low</Button>
+                >Marks</Button>
               </Toolbar>
               <Snackbar
                 anchorOrigin={{ vertical, horizontal }}
